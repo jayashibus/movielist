@@ -6,6 +6,8 @@ import {
 } from "../../redux/actions/movieAction";
 import { useDispatch } from "react-redux";
 import { ActionTypes } from "../../redux/contants/actiontypes";
+import MovieCard from "./MovieCard";
+import "./Container.css";
 
 const Container = () => {
   const dispatch = useDispatch();
@@ -59,6 +61,11 @@ const Container = () => {
   //   setMoviesData(movies.movies);
   //   setCategory("all");
   // };
+
+  const searchHandler = (event) => {
+    console.log(event.target.value);
+    setSearch(event.target.value);
+  };
 
   const onClickMovieHandler = (category) => {
     const type = {
@@ -140,7 +147,7 @@ const Container = () => {
                 type="text"
                 placeholder="Search Movies...."
                 value={search}
-                onChange={(event) => setSearch(event.target.value)}
+                onChange={searchHandler}
               />
             </div>
           </div>
@@ -148,17 +155,18 @@ const Container = () => {
           {movies[category].length !== 0 ? (
             <div className="box">
               {movies[category].map((movie) => {
-                const imageURL = `https://image.tmdb.org/t/p/w500/${movie.backdrop_path}`;
+                const imageURL = `https://image.tmdb.org/t/p/w500/${movie.poster_path}`;
 
                 return (
-                  <div key={movie.id}>
-                    <a href="/#">
-                      <img src={imageURL} alt="thumbnail" />
-                    </a>
-                    <figcaption style={{ textAlign: "center" }}>
-                      {movie.title ? movie.title : movie.name}
-                    </figcaption>
-                  </div>
+                  <MovieCard
+                    key={movie.id}
+                    id={movie.id}
+                    poster={imageURL}
+                    title={movie.title || movie.name}
+                    date={movie.first_air_date || movie.release_date}
+                    media_type={movie.media_type}
+                    vote_average={movie.vote_average}
+                  />
                 );
               })}{" "}
             </div>
@@ -176,9 +184,4 @@ const Container = () => {
     </div>
   );
 };
-
 export default Container;
-
-export const ContainerItem = (props) => {
-  return <div>{props.data[0].title}</div>;
-};
