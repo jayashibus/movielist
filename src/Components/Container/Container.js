@@ -8,6 +8,11 @@ import { useDispatch } from "react-redux";
 import { ActionTypes } from "../../redux/contants/actiontypes";
 import MovieCard from "./MovieCard";
 import "./Container.css";
+import Stack from "@mui/material/Stack";
+import Button from "@mui/material/Button";
+import SearchIcon from "@mui/icons-material/Search";
+import InputBase from "@mui/material/InputBase";
+import { styled, alpha } from "@mui/material/styles";
 
 const Container = () => {
   const dispatch = useDispatch();
@@ -62,7 +67,7 @@ const Container = () => {
   //   setCategory("all");
   // };
 
-  const searchHandler = (event) => {
+  const onSearchHandler = (event) => {
     console.log(event.target.value);
     setSearch(event.target.value);
   };
@@ -118,6 +123,45 @@ const Container = () => {
   //     setMoviesData(results);
   //   }
   // }, [search, category]);
+  const Search = styled("div")(({ theme }) => ({
+    position: "relative",
+    borderRadius: theme.shape.borderRadius,
+    backgroundColor: alpha(theme.palette.common.white, 0.15),
+    "&:hover": {
+      backgroundColor: alpha(theme.palette.common.white, 0.25),
+    },
+    marginRight: theme.spacing(2),
+    marginLeft: 0,
+    width: "100%",
+    [theme.breakpoints.up("sm")]: {
+      marginLeft: theme.spacing(3),
+      width: "auto",
+    },
+  }));
+
+  const SearchIconWrapper = styled("div")(({ theme }) => ({
+    padding: theme.spacing(0, 2),
+    height: "100%",
+    position: "absolute",
+    pointerEvents: "none",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  }));
+
+  const StyledInputBase = styled(InputBase)(({ theme }) => ({
+    color: "inherit",
+    "& .MuiInputBase-input": {
+      padding: theme.spacing(1, 1, 1, 0),
+      // vertical padding + font size from searchIcon
+      paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+      transition: theme.transitions.create("width"),
+      width: "100%",
+      [theme.breakpoints.up("md")]: {
+        width: "20ch",
+      },
+    },
+  }));
 
   return (
     <div>
@@ -135,20 +179,47 @@ const Container = () => {
               </h1>
             </div>
 
-            <div style={{ paddingTop: "90px" }}>
-              <button onClick={() => onClickMovieHandler("movies")}>All</button>
-              <button onClick={() => onClickMovieHandler("movie")}>
-                Movies
-              </button>
-              <button onClick={() => onClickMovieHandler("tv")}>
-                TV Shows
-              </button>
-              <input
-                type="text"
-                placeholder="Search Movies...."
-                value={search}
-                onChange={searchHandler}
-              />
+            <div
+              style={{
+                paddingTop: "75px",
+              }}
+            >
+              <Stack spacing={2} direction="row">
+                <Button
+                  variant="contained"
+                  color={category == "movies" ? "success" : "error"}
+                  onClick={() => onClickMovieHandler("movies")}
+                >
+                  All
+                </Button>
+                <Button
+                  variant="contained"
+                  color={category == "movie" ? "success" : "error"}
+                  onClick={() => onClickMovieHandler("movie")}
+                >
+                  Movies
+                </Button>
+                <Button
+                  variant="contained"
+                  color={category == "tv" ? "success" : "error"}
+                  onClick={() => onClickMovieHandler("tv")}
+                >
+                  TV Shows
+                </Button>
+
+                <Search>
+                  <SearchIconWrapper>
+                    <SearchIcon />
+                  </SearchIconWrapper>
+                  <StyledInputBase
+                    placeholder="Search…"
+                    inputProps={{ "aria-label": "search" }}
+                    onChange={onSearchHandler}
+                    autoFocus={true}
+                    value={search}
+                  />
+                </Search>
+              </Stack>
             </div>
           </div>
 
