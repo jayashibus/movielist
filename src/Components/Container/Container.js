@@ -1,18 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
-import {
-  setCategoryMovie,
-  setCategoryTV,
-} from "../../redux/actions/movieAction";
+import { setCategoryMovie } from "../../redux/actions/movieAction";
 import { useDispatch } from "react-redux";
 import { ActionTypes } from "../../redux/contants/actiontypes";
 import MovieCard from "./MovieCard";
-import "./Container.css";
+import "./Container.scss";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
 import SearchIcon from "@mui/icons-material/Search";
 import InputBase from "@mui/material/InputBase";
 import { styled, alpha } from "@mui/material/styles";
+import { setMovies } from "../../redux/actions/movieAction";
 
 const Container = () => {
   const dispatch = useDispatch();
@@ -20,29 +18,8 @@ const Container = () => {
     return { ...state.allMovies };
   });
 
-  // const [moviesData, setMoviesData] = useState([...movies.movies]);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("movies");
-
-  // if (category === "tv") {
-  //   setMoviesData(stateTv);
-  // } else if (category === "movie") {
-  //   setMoviesData(stateMovie);
-  // } else {
-  //   setMoviesData(movies);
-  // }
-
-  // const filterCategory = (selectedCategory) => {
-  //   if (selectedCategory !== "all") {
-  //     const updatedMovie = movies.filter((currentMovie) => {
-  //       return currentMovie.media_type === selectedCategory;
-  //     });  //     setMoviesData(updatedMovie);
-  //     setCategory(selectedCategory);
-  //   } else {
-  //     setMoviesData(movies);
-  //     setCategory(selectedCategory);
-  //   }
-  // };
 
   // const onChangeHandler = (event) => {
   //   const keyword = event.target.value;
@@ -61,15 +38,22 @@ const Container = () => {
   //   }
   // };
 
-  // const onClickAllHandler = () => {
-  //   console.log("I am here", moviesData);
-  //   setMoviesData(movies.movies);
-  //   setCategory("all");
-  // };
-
   const onSearchHandler = (event) => {
     console.log(event.target.value);
+    const keyword = event.target.value;
+    const apiUrl = `https://api.themoviedb.org/3/search/multi?api_key=b8147d9a2b320232dcbd7689528ce05a&language=en-US&query=${keyword}&page=1&include_adult=false`;
+    searchMovies(apiUrl);
     setSearch(event.target.value);
+  };
+
+  const searchMovies = async (apiUrl) => {
+    try {
+      const response = await fetch(apiUrl);
+      const movieData = await response.json();
+      dispatch(setMovies(movieData.results));
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const onClickMovieHandler = (category) => {
@@ -77,23 +61,12 @@ const Container = () => {
       movies: ActionTypes.SET_MOVIES,
       movie: ActionTypes.SELECTED_CATEGORY_MOVIE,
       tv: ActionTypes.SELECTED_CATEGORY_TV,
+      person: ActionTypes.SELECTED_CATEGORY_PERSON,
     };
     console.log(type[category]);
     dispatch(setCategoryMovie(movies.movies, type[category]));
-
-    //setMoviesData(movies.movie);
     setCategory(category);
   };
-
-  // const onClickTvHandler = () => {
-  //   console.log("I am here", moviesData);
-  //   dispatch(setCategoryTV(movies.movies));
-  //   setMoviesData(movies.tv);
-  //   setCategory("tv");
-  // };
-  // const onClickTVHandler = (movies) => {
-  //   dispatch(setCategoryTV(movies));
-  // };
 
   // useEffect(() => {
   //   if (category === "all" && search === "") {
@@ -175,6 +148,8 @@ const Container = () => {
                   ? "Movies"
                   : category === "tv"
                   ? "TV Show"
+                  : category === "person"
+                  ? "Others"
                   : "All"}
               </h1>
             </div>
@@ -205,6 +180,13 @@ const Container = () => {
                   onClick={() => onClickMovieHandler("tv")}
                 >
                   TV Shows
+                </Button>
+                <Button
+                  variant="contained"
+                  color={category == "person" ? "success" : "error"}
+                  onClick={() => onClickMovieHandler("person")}
+                >
+                  Others
                 </Button>
 
                 <Search>
@@ -237,9 +219,10 @@ const Container = () => {
                     date={movie.first_air_date || movie.release_date}
                     media_type={movie.media_type}
                     vote_average={movie.vote_average}
+                    imagename={movie.poster_path}
                   />
                 );
-              })}{" "}
+              })}
             </div>
           ) : (
             <div>

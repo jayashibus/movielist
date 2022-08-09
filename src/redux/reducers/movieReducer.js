@@ -4,6 +4,7 @@ const initialState = {
   movies: [],
   movie: [],
   tv: [],
+  person: [],
 };
 
 export const movieReducer = (state = initialState, { type, payload }) => {
@@ -21,6 +22,11 @@ export const movieReducer = (state = initialState, { type, payload }) => {
       return {
         ...state,
         tv: state.movies.filter((movie) => movie.media_type === "tv"),
+      };
+    case ActionTypes.SELECTED_CATEGORY_PERSON:
+      return {
+        ...state,
+        person: state.movies.filter((movie) => movie.media_type === "person"),
       };
 
     default:
