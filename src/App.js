@@ -5,6 +5,7 @@ import Container from "./Components/Container/Container";
 import Footer from "./Components/Footer/Footer";
 import { useDispatch } from "react-redux";
 import { setMovies } from "./redux/actions/movieAction";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 
 function App() {
   const dispatch = useDispatch();
